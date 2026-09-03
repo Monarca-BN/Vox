@@ -14,8 +14,8 @@
 
 **Purpose**: Confirm the frozen tree exists.
 
-- [ ] T001 Confirm directories `server/`, `mock/`, `shared/` exist at repo root per plan.md
-- [ ] T002 Confirm `package.json` has `"type": "module"` and start script `node server/index.js`
+- [x] T001 Confirm directories `server/`, `mock/`, `shared/` exist at repo root per plan.md
+- [x] T002 Confirm `package.json` has `"type": "module"` and start script `node server/index.js`
 
 ---
 
@@ -23,8 +23,8 @@
 
 **Purpose**: Contract + mock pool. Blocks user stories.
 
-- [ ] T003 Keep `ComentarioAnalizado` and `isComentarioAnalizado` in `shared/types.js` (texto, es_bug, severity enum, feature, resumen)
-- [ ] T004 [P] Fill `mock/comentarios.json` with multiple fake X-style posts covering bugs and non-bugs and low/medium/high
+- [x] T003 Keep `ComentarioAnalizado` and `isComentarioAnalizado` in `shared/types.js` (texto, es_bug, severity enum, feature, resumen)
+- [x] T004 [P] Fill `mock/comentarios.json` with multiple fake X-style posts covering bugs and non-bugs and low/medium/high
 
 **Checkpoint**: contract and pool exist without an HTTP server
 
@@ -36,10 +36,10 @@
 
 **Independent Test**: `GET http://localhost:3000/api/comentarios` → 200 + `comentarios` + `updatedAt`
 
-- [ ] T005 [US1] Implement mock reader in `server/mock.js`: load `mock/comentarios.json`, drop invalid items via `isComentarioAnalizado`, return `{ comentarios, updatedAt }`
-- [ ] T006 [US1] Default `server/provider.js` to the mock path (xAI stub MUST NOT run by default)
-- [ ] T007 [US1] Serve `GET /api/comentarios` in `server/index.js` as JSON with CORS (FR-001, FR-007)
-- [ ] T008 [US1] Ignore query pagination; return the current list in full (C-001)
+- [x] T005 [US1] Implement mock reader in `server/mock.js`: load `mock/comentarios.json`, drop invalid items via `isComentarioAnalizado`, return `{ comentarios, updatedAt }`
+- [x] T006 [US1] Default `server/provider.js` to the mock path (xAI stub MUST NOT run by default)
+- [x] T007 [US1] Serve `GET /api/comentarios` in `server/index.js` as JSON with CORS (FR-001, FR-007)
+- [x] T008 [US1] Ignore query pagination; return the current list in full (C-001)
 
 **Checkpoint**: Persona B can render a feed with no `XAI_API_KEY`
 
@@ -51,8 +51,8 @@
 
 **Independent Test**: inspect `comentarios[].texto` and mix of `es_bug` / `severity`
 
-- [ ] T009 [US2] Ensure every `texto` in `mock/comentarios.json` is natural-language user speech
-- [ ] T010 [US2] Ensure the pool includes `es_bug: true` and `es_bug: false` and all three severities (FR-005)
+- [x] T009 [US2] Ensure every `texto` in `mock/comentarios.json` is natural-language user speech
+- [x] T010 [US2] Ensure the pool includes `es_bug: true` and `es_bug: false` and all three severities (FR-005)
 
 **Checkpoint**: demo feed reads as filtered X, not lorem ipsum
 
@@ -64,8 +64,8 @@
 
 **Independent Test**: force a mock read error; GET still 200 with `comentarios` array and `error` string
 
-- [ ] T011 [US3] In `server/index.js` / `server/mock.js`, on failure return HTTP 200 JSON `{ comentarios, updatedAt, error }` (C-002, FR-006)
-- [ ] T012 [US3] Non-GET to `/api/comentarios` MUST NOT be treated as success
+- [x] T011 [US3] In `server/index.js` / `server/mock.js`, on failure return HTTP 200 JSON `{ comentarios, updatedAt, error }` (C-002, FR-006)
+- [x] T012 [US3] Non-GET to `/api/comentarios` MUST NOT be treated as success
 
 **Checkpoint**: B can show an error state without a blank body
 
@@ -73,8 +73,8 @@
 
 ## Phase 6: Polish
 
-- [ ] T013 Confirm `server/xai.js` is not on the default path (C-005, SC-004)
-- [ ] T014 Run `quickstart.md`: two GETs in a row, each < 2s, 100% items pass the contract (SC-002, SC-003)
+- [x] T013 Confirm `server/xai.js` is not on the default path (C-005, SC-004)
+- [x] T014 Run `quickstart.md`: two GETs in a row, each < 2s, 100% items pass the contract (SC-002, SC-003)
 
 ---
 
