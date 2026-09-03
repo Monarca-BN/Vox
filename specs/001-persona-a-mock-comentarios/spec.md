@@ -4,7 +4,7 @@
 
 **Created**: 2026-09-03
 
-**Status**: Draft
+**Status**: Clarified
 
 **Input**: User description: "Persona A entrega comentarios analizados con un mock que finge mensajes de X. Endpoint GET /api/comentarios. Contrato ComentarioAnalizado. Sin xAI."
 
@@ -94,3 +94,13 @@ Si el mock no se puede leer, el cliente todavía recibe una respuesta útil (lis
 - Linear, Slack, real X ingestion, and persistent storage remain out of scope.
 - Existing stub files for xAI, if present, MUST NOT become the default path for this slice.
 - Dripping/batching extra mock comments over time is an implementation detail unless a later spec amendment requires a live-looking feed.
+
+## Clarifications
+
+Session 2026-09-03. Decisions frozen before plan:
+
+- **C-001 Pagination**: none. `GET /api/comentarios` returns the current list in full, not pages or cursors.
+- **C-002 Transport of errors**: on mock/read failure, HTTP status stays 200 and the JSON includes `error` (string) plus `comentarios` (array, possibly empty). Persona B MUST NOT need a 5xx to show degraded state.
+- **C-003 Push vs pull**: Persona A does not push. Persona B MAY poll. Repeated GET MUST be safe and keep the same contract.
+- **C-004 Mock theme**: items MUST read as user posts about a software product (bugs and feature requests), not lorem ipsum or internal ids.
+- **C-005 Default path**: mock is the only authorized source in this slice. An xAI stub MAY exist but MUST NOT run unless a later spec amendment says so.
