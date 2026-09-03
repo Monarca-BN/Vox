@@ -2,17 +2,31 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0f14" />
+    <meta name="description" content="Comentarios reales de X, filtrados." />
     <title>Vox</title>
     <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/icon-192.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <header>
-      <h1>Vox</h1>
-      <p id="meta">Cargando comentarios mock…</p>
+    <header class="topbar">
+      <div class="brand">
+        <img class="logo" src="/icon-192.png" alt="" width="40" height="40" />
+        <div>
+          <h1>Vox</h1>
+          <p class="tema">Monitoreando X sobre <strong id="tema"></strong></p>
+        </div>
+      </div>
+      <div class="status">
+        <span id="fuente" class="pill">live</span>
+        <span id="meta" class="meta">Cargando comentarios…</span>
+      </div>
     </header>
-    <main id="feed"></main>
+    <section id="banner" class="banner hidden" role="status"></section>
+    <main id="feed" class="feed" aria-live="polite"></main>
     <script src="/app.js"></script>
   </body>
 </html>
