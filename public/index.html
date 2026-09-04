@@ -3,61 +3,98 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0b0f14" />
+    <meta name="theme-color" content="#070b14" />
     <meta name="description" content="Comentarios reales de X, filtrados." />
     <title>Vox</title>
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" href="/icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <div class="brand">
-        <img class="logo" src="/icon-192.png" alt="" width="40" height="40" />
-        <div>
-          <h1>Vox</h1>
-          <p class="tema">Monitoreando X sobre <strong id="tema"></strong></p>
+    <a class="skip-link" href="#feed">Saltar al feed</a>
+
+    <header class="topbar" role="banner">
+      <div class="topbar-inner">
+        <div class="brand">
+          <img class="logo" src="/icon-192.png" alt="" width="40" height="40" />
+          <div class="brand-text">
+            <h1>Vox</h1>
+            <p class="tema">Monitoreando X sobre <strong id="tema"></strong></p>
+          </div>
+        </div>
+        <div class="status" aria-live="polite">
+          <div class="status-row">
+            <span id="fuente" class="pill">live</span>
+            <button type="button" id="btn-refresh" class="btn-refresh" aria-label="Actualizar comentarios" title="Actualizar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 12a9 9 0 1 1-2.64-6.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M21 4v5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <span id="meta" class="meta">Cargando comentarios…</span>
         </div>
       </div>
-      <div class="status">
-        <span id="fuente" class="pill">live</span>
-        <span id="meta" class="meta">Cargando comentarios…</span>
-      </div>
     </header>
-    <section id="banner" class="banner hidden" role="status"></section>
-    <section class="filters" aria-label="Filtros de comentarios">
-      <label>
-        Severidad
-        <select id="filtro-severity">
-          <option value="">Todas</option>
-          <option value="high">Alta</option>
-          <option value="medium">Media</option>
-          <option value="low">Baja</option>
-        </select>
-      </label>
-      <label>
-        Tipo
-        <select id="filtro-es_bug">
-          <option value="">Todos</option>
-          <option value="true">Bug</option>
-          <option value="false">Feature</option>
-        </select>
-      </label>
-      <label>
-        Feature
-        <input id="filtro-feature" type="text" placeholder="ej. latencia" autocomplete="off" />
-      </label>
-      <button type="button" id="aplicar-filtros">Filtrar</button>
-    </section>
-    <main id="feed" class="feed" aria-live="polite"></main>
-    <section class="tickets-wrap" aria-label="Tickets fingidos">
-      <div class="tickets-head">
-        <h2>Tickets fingidos</h2>
-        <span id="tickets-meta" class="meta">Ninguno todavía</span>
-      </div>
-      <div id="tickets" class="tickets"></div>
-    </section>
+
+    <section id="banner" class="banner hidden" role="status" aria-live="polite"></section>
+
+    <div class="controls-wrap">
+      <section class="toolbar" aria-label="Filtros del feed">
+        <div class="search-field">
+          <label for="search" class="sr-only">Buscar en resumen, texto o feature</label>
+          <input
+            type="search"
+            id="search"
+            class="search-input"
+            placeholder="Buscar en resumen, texto o feature…"
+            autocomplete="off"
+            enterkeyhint="search"
+          />
+        </div>
+
+        <div class="filter-group" role="group" aria-labelledby="sev-label">
+          <span id="sev-label" class="filter-label">Severidad</span>
+          <div class="chip-row" id="sev-chips">
+            <button type="button" class="filter-chip is-active" data-sev="all" aria-pressed="true">Todas</button>
+            <button type="button" class="filter-chip" data-sev="high" aria-pressed="false">Alta</button>
+            <button type="button" class="filter-chip" data-sev="medium" aria-pressed="false">Media</button>
+            <button type="button" class="filter-chip" data-sev="low" aria-pressed="false">Baja</button>
+          </div>
+        </div>
+
+        <div class="toolbar-actions">
+          <label class="toggle-bugs">
+            <input type="checkbox" id="solo-bugs" />
+            <span class="toggle-ui" aria-hidden="true"></span>
+            <span>Solo bugs</span>
+          </label>
+
+          <div class="sort-field">
+            <label for="sort" class="filter-label">Orden</label>
+            <select id="sort" class="sort-select">
+              <option value="severity">Severidad</option>
+              <option value="reciente">Reciente</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats" id="stats" aria-label="Estadísticas del feed" aria-live="polite">
+        <div class="stat"><span class="stat-val" id="stat-total">0</span><span class="stat-lbl">visibles</span></div>
+        <div class="stat"><span class="stat-val" id="stat-bugs">0</span><span class="stat-lbl">bugs</span></div>
+        <div class="stat sev-high"><span class="stat-val" id="stat-high">0</span><span class="stat-lbl">alta</span></div>
+        <div class="stat sev-medium"><span class="stat-val" id="stat-medium">0</span><span class="stat-lbl">media</span></div>
+        <div class="stat sev-low"><span class="stat-val" id="stat-low">0</span><span class="stat-lbl">baja</span></div>
+      </section>
+    </div>
+
+    <main id="feed" class="feed" aria-live="polite" tabindex="-1"></main>
+
     <script src="/app.js"></script>
   </body>
 </html>
