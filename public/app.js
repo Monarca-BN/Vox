@@ -183,7 +183,13 @@ function pintar() {
 
   updateStats(items);
 
-  if (!state.items.length) {
+  const hasFilter =
+    state.severity !== "all" ||
+    state.soloBugs ||
+    Boolean(state.feature.trim()) ||
+    Boolean(state.query.trim());
+
+  if (!state.items.length && !hasFilter) {
     feed.innerHTML = `
       <div class="empty" role="status">
         <span class="empty-title">No hay incidencias todavía</span>
