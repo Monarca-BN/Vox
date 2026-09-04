@@ -125,13 +125,13 @@ function getFilteredSorted() {
   return list;
 }
 
-function renderCard(c, i) {
+function renderCard(c) {
   const sev = normalizeSev(c.severity);
   const feature = escapeHtml(c.feature || "General");
   const resumen = escapeHtml(c.resumen || "");
   const texto = escapeHtml(c.texto || "");
   const bug = c.es_bug ? `<span class="chip bug">Bug</span>` : "";
-  const label = `${SEVERIDAD[sev]}${c.es_bug ? ", bug" : ""}: ${c.resumen || c.texto || "comentario"}`;
+  const label = `${SEVERIDAD[sev]}${c.es_bug ? ", bug" : ""}: ${c.resumen || c.texto || "incidencia"}`;
 
   return `
     <article class="card ${sev}" aria-label="${escapeHtml(label)}">
@@ -142,25 +142,6 @@ function renderCard(c, i) {
       </div>
       <h2 class="resumen">${resumen}</h2>
       <blockquote class="texto">${texto}</blockquote>
-      <button type="button" class="btn-ticket" data-idx="${i}">Crear ticket</button>
-    </article>
-  `;
-}
-
-function renderTicket(t) {
-  const sev = normalizeSev(t.severity);
-  const cerrado = t.estado === "hecho";
-  return `
-    <article class="card ticket ${sev}">
-      <div class="card-head">
-        <span class="chip">${escapeHtml(t.id)}</span>
-        <span class="badge ${sev}">${SEVERIDAD[sev]}</span>
-        <span class="chip ${cerrado ? "hecho" : "abierto"}">${cerrado ? "Hecho" : "Abierto"}</span>
-        <span class="chip">${escapeHtml(t.feature || "")}</span>
-      </div>
-      <h2 class="resumen">${escapeHtml(t.titulo || t.resumen || "")}</h2>
-      <p class="texto">${escapeHtml(t.textoOrigen || "")}</p>
-      ${cerrado ? "" : `<button type="button" class="btn-cerrar" data-id="${escapeHtml(t.id)}">Cerrar</button>`}
     </article>
   `;
 }
@@ -197,21 +178,21 @@ function pintar() {
 
   setFuente(state.fuente);
   $("meta").textContent = state.items.length
-    ? state.items.length + " en total · actualizado " + hora(state.updatedAt)
-    : "Sin comentarios · " + hora(state.updatedAt);
+    ? state.items.length + " en el feed · actualizado " + hora(state.updatedAt)
+    : "Nada en el feed · " + hora(state.updatedAt);
 
   updateStats(items);
 
   if (!state.items.length) {
     feed.innerHTML = `
       <div class="empty" role="status">
-        <span class="empty-title">No hay comentarios relevantes todavía</span>
-        <span class="empty-hint">Cuando lleguen menciones sobre ${escapeHtml(TEMA)}, aparecerán aquí.</span>
+        <span class="empty-title">No hay incidencias todavía</span>
+        <span class="empty-hint">Lo que llega filtrado es el trabajo: cada tarjeta es un ticket sobre ${escapeHtml(TEMA)}.</span>
       </div>`;
   } else if (!items.length) {
     feed.innerHTML = `
       <div class="empty" role="status">
-        <span class="empty-title">Ningún comentario coincide</span>
+        <span class="empty-title">Nada coincide en el feed</span>
         <span class="empty-hint">Prueba otra búsqueda, severidad, feature o desactiva «Solo bugs».</span>
       </div>`;
   } else {
@@ -230,56 +211,6 @@ function applyItems(raw, opts) {
   pintar();
 }
 
-async function loadTickets() {
-  const box = $("tickets");
-  const meta = $("tickets-meta");
-  if (!box || !meta) return;
-  try {
-    const res = await fetch("/api/tickets", { cache: "no-store" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const data = await res.json();
-    const list = Array.isArray(data.tickets) ? data.tickets : [];
-    meta.textContent = list.length
-      ? list.length + " tickets · " + hora(data.updatedAt)
-      : "Ninguno todavía · " + hora(data.updatedAt);
-    box.innerHTML = list.length
-      ? list.map(renderTicket).join("")
-      : `<div class="empty" role="status"><span class="empty-title">Ningún ticket todavía</span><span class="empty-hint">Crea uno desde una tarjeta. Son fingidos: viven solo mientras corre el server.</span></div>`;
-  } catch (err) {
-    meta.textContent = String(err.message || err);
-  }
-}
-
-async function crearTicket(idx) {
-  const c = state.visible[idx];
-  if (!c) return;
-  const res = await fetch("/api/tickets", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(toComentario(c)),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    setBanner(data.error || "No se pudo crear el ticket", true);
-    return;
-  }
-  setBanner("Ticket " + data.id + " creado (fingido, no Linear)", false);
-  await loadTickets();
-}
-
-async function cerrarTicketUi(id) {
-  const res = await fetch("/api/tickets/" + encodeURIComponent(id) + "/cerrar", {
-    method: "POST",
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    setBanner(data.error || "No se pudo cerrar el ticket", true);
-    return;
-  }
-  setBanner("Ticket " + data.id + " marcado como hecho", false);
-  await loadTickets();
-}
-
 async function load(primera) {
   const gen = ++loadGen;
   const btn = $("btn-refresh");
@@ -288,7 +219,7 @@ async function load(primera) {
   if (primera) {
     $("feed").innerHTML = `
       <div class="loading" role="status">
-        <span class="loading-title">Buscando comentarios<span class="loading-dot" aria-hidden="true"></span></span>
+        <span class="loading-title">Cargando el feed<span class="loading-dot" aria-hidden="true"></span></span>
         <span class="loading-hint">Consultando /api/comentarios…</span>
       </div>`;
   }
@@ -365,18 +296,6 @@ function bindControls() {
   });
 
   $("btn-refresh").addEventListener("click", () => load(false));
-
-  $("feed").addEventListener("click", (ev) => {
-    const btn = ev.target.closest(".btn-ticket");
-    if (!btn) return;
-    crearTicket(Number(btn.dataset.idx));
-  });
-
-  $("tickets").addEventListener("click", (ev) => {
-    const btn = ev.target.closest(".btn-cerrar");
-    if (!btn) return;
-    cerrarTicketUi(btn.dataset.id);
-  });
 }
 
 function registrarSW() {
@@ -389,9 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
   bindControls();
   registrarSW();
   load(true);
-  loadTickets();
   setInterval(() => {
     load(false);
-    loadTickets();
   }, POLL_MS);
 });

@@ -18,4 +18,6 @@ POST /api/tickets
 A toca server/ mock/ shared/
 B toca public/
 
-Demo 002/003: mock only. Tickets fingidos en memoria. Sin xAI, Linear ni Supabase.
+Demo 002/003: mock only. El feed filtrado es lo que llega (las tarjetas son el trabajo).
+`GET`/`POST /api/tickets` sigue en el server para un umbral automático después; la UI ya no crea tickets a mano.
+Sin xAI, Linear ni Supabase.

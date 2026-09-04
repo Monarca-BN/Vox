@@ -1,6 +1,9 @@
 /**
  * In-memory fake tickets. Lost when the process exits.
  * Not Linear. Not Supabase. (spec 003)
+ *
+ * The PWA no longer exposes manual create/close. The filtered feed is
+ * the arriving work items. This API stays for a later auto-threshold.
  */
 
 let seq = 1;
