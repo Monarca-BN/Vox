@@ -67,6 +67,17 @@
           </div>
         </div>
 
+        <div class="filter-group">
+          <label for="filtro-feature" class="filter-label">Feature</label>
+          <input
+            id="filtro-feature"
+            class="feature-input"
+            type="text"
+            placeholder="ej. latencia"
+            autocomplete="off"
+          />
+        </div>
+
         <div class="toolbar-actions">
           <label class="toggle-bugs">
             <input type="checkbox" id="solo-bugs" />
@@ -94,6 +105,14 @@
     </div>
 
     <main id="feed" class="feed" aria-live="polite" tabindex="-1"></main>
+
+    <section class="tickets-wrap" aria-label="Tickets fingidos">
+      <div class="tickets-head">
+        <h2>Tickets fingidos</h2>
+        <span id="tickets-meta" class="meta">Ninguno todavía</span>
+      </div>
+      <div id="tickets" class="tickets"></div>
+    </section>
 
     <script src="/app.js"></script>
   </body>
