@@ -102,7 +102,7 @@ function getFilteredSorted() {
     });
   } else {
     // Reciente: preserve original fetch order (newest-first if API sends that)
-    list.sort((a, b) => (a.__i ?? 0) - (b.__i ?? 0);
+    list.sort((a, b) => (a.__i ?? 0) - (b.__i ?? 0));
   }
 
   return list;
