@@ -1,4 +1,4 @@
-const CACHE = "vox-public-v1";
+const CACHE = "vox-public-v2";
 const ASSETS = [
   "/",
   "/index.html",

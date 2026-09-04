@@ -51,13 +51,27 @@ function hora(iso) {
   });
 }
 
+let comentariosActuales = [];
+
+function queryComentarios() {
+  const params = new URLSearchParams();
+  const sev = $("filtro-severity")?.value || "";
+  const bug = $("filtro-es_bug")?.value || "";
+  const feat = ($("filtro-feature")?.value || "").trim();
+  if (sev) params.set("severity", sev);
+  if (bug) params.set("es_bug", bug);
+  if (feat) params.set("feature", feat);
+  const q = params.toString();
+  return q ? "/api/comentarios?" + q : "/api/comentarios";
+}
+
 async function getComentariosDesdeA() {
-  const res = await fetch("/api/comentarios");
+  const res = await fetch(queryComentarios());
   if (!res.ok) throw new Error("HTTP " + res.status);
   return res.json();
 }
 
-function renderCard(c) {
+function renderCard(c, i) {
   const sev = ["high", "medium", "low"].includes(c.severity) ? c.severity : "low";
   const bug = c.es_bug ? `<span class="chip bug">Bug</span>` : "";
   return `
@@ -69,6 +83,7 @@ function renderCard(c) {
       </div>
       <p class="resumen">${escapeHtml(c.resumen || "")}</p>
       <p class="texto">${escapeHtml(c.texto || "")}</p>
+      <button type="button" class="btn-ticket" data-idx="${i}">Crear ticket</button>
     </article>
   `;
 }
@@ -96,12 +111,80 @@ function pintar(items, opts) {
   $("meta").textContent = items.length
     ? items.length + " comentarios · " + hora(opts.updatedAt)
     : "Sin comentarios · " + hora(opts.updatedAt);
+  comentariosActuales = items;
   if (!items.length) {
     feed.innerHTML = `<div class="empty">No hay comentarios relevantes todavía.</div>`;
   } else {
     feed.innerHTML = items.map(renderCard).join("");
   }
   setBanner(opts.error || "", Boolean(opts.error));
+}
+
+function renderTicket(t) {
+  const sev = ["high", "medium", "low"].includes(t.severity) ? t.severity : "low";
+  const cerrado = t.estado === "hecho";
+  return `
+    <article class="card ticket ${sev}">
+      <div class="card-head">
+        <span class="chip">${escapeHtml(t.id)}</span>
+        <span class="badge ${sev}">${SEVERIDAD[sev]}</span>
+        <span class="chip ${cerrado ? "hecho" : "abierto"}">${cerrado ? "Hecho" : "Abierto"}</span>
+      </div>
+      <p class="resumen">${escapeHtml(t.titulo || t.resumen || "")}</p>
+      <p class="texto">${escapeHtml(t.textoOrigen || "")}</p>
+      ${cerrado ? "" : `<button type="button" class="btn-cerrar" data-id="${escapeHtml(t.id)}">Cerrar</button>`}
+    </article>
+  `;
+}
+
+async function loadTickets() {
+  const box = $("tickets");
+  const meta = $("tickets-meta");
+  if (!box || !meta) return;
+  try {
+    const res = await fetch("/api/tickets");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const list = Array.isArray(data.tickets) ? data.tickets : [];
+    meta.textContent = list.length
+      ? list.length + " tickets · " + hora(data.updatedAt)
+      : "Ninguno todavía · " + hora(data.updatedAt);
+    box.innerHTML = list.length
+      ? list.map(renderTicket).join("")
+      : `<div class="empty">Crea un ticket desde un comentario. Son fingidos: viven solo mientras corre el server.</div>`;
+  } catch (err) {
+    meta.textContent = String(err);
+  }
+}
+
+async function crearTicket(idx) {
+  const c = comentariosActuales[idx];
+  if (!c) return;
+  const res = await fetch("/api/tickets", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(c),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    setBanner(data.error || "No se pudo crear el ticket", true);
+    return;
+  }
+  setBanner("Ticket " + data.id + " creado (fingido, no Linear)", false);
+  await loadTickets();
+}
+
+async function cerrarTicketUi(id) {
+  const res = await fetch("/api/tickets/" + encodeURIComponent(id) + "/cerrar", {
+    method: "POST",
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    setBanner(data.error || "No se pudo cerrar el ticket", true);
+    return;
+  }
+  setBanner("Ticket " + data.id + " marcado como hecho", false);
+  await loadTickets();
 }
 
 async function load(primera) {
@@ -132,6 +215,21 @@ function registrarSW() {
 document.addEventListener("DOMContentLoaded", () => {
   $("tema").textContent = TEMA;
   registrarSW();
+  $("aplicar-filtros")?.addEventListener("click", () => load(false));
+  $("filtro-feature")?.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") load(false);
+  });
+  $("feed")?.addEventListener("click", (ev) => {
+    const btn = ev.target.closest(".btn-ticket");
+    if (!btn) return;
+    crearTicket(Number(btn.dataset.idx));
+  });
+  $("tickets")?.addEventListener("click", (ev) => {
+    const btn = ev.target.closest(".btn-cerrar");
+    if (!btn) return;
+    cerrarTicketUi(btn.dataset.id);
+  });
   load(true);
+  loadTickets();
   setInterval(() => load(false), POLL_MS);
 });
