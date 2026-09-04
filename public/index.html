@@ -26,7 +26,38 @@
       </div>
     </header>
     <section id="banner" class="banner hidden" role="status"></section>
+    <section class="filters" aria-label="Filtros de comentarios">
+      <label>
+        Severidad
+        <select id="filtro-severity">
+          <option value="">Todas</option>
+          <option value="high">Alta</option>
+          <option value="medium">Media</option>
+          <option value="low">Baja</option>
+        </select>
+      </label>
+      <label>
+        Tipo
+        <select id="filtro-es_bug">
+          <option value="">Todos</option>
+          <option value="true">Bug</option>
+          <option value="false">Feature</option>
+        </select>
+      </label>
+      <label>
+        Feature
+        <input id="filtro-feature" type="text" placeholder="ej. latencia" autocomplete="off" />
+      </label>
+      <button type="button" id="aplicar-filtros">Filtrar</button>
+    </section>
     <main id="feed" class="feed" aria-live="polite"></main>
+    <section class="tickets-wrap" aria-label="Tickets fingidos">
+      <div class="tickets-head">
+        <h2>Tickets fingidos</h2>
+        <span id="tickets-meta" class="meta">Ninguno todavía</span>
+      </div>
+      <div id="tickets" class="tickets"></div>
+    </section>
     <script src="/app.js"></script>
   </body>
 </html>

@@ -119,6 +119,90 @@ h1 {
 
 .hidden { display: none; }
 
+.filters {
+  max-width: 1100px;
+  margin: 0 auto 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  align-items: flex-end;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.filters select,
+.filters input {
+  min-width: 140px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+}
+
+.filters button,
+.btn-ticket,
+.btn-cerrar {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.filters button:hover,
+.btn-ticket:hover,
+.btn-cerrar:hover {
+  border-color: var(--accent);
+}
+
+.btn-ticket,
+.btn-cerrar {
+  margin-top: 12px;
+}
+
+.chip.abierto { color: var(--medium); }
+.chip.hecho { color: var(--accent); }
+
+.tickets-wrap {
+  max-width: 1100px;
+  margin: 28px auto 0;
+}
+
+.tickets-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tickets-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.tickets {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
 .feed {
   display: grid;
   grid-template-columns: 1fr;
@@ -218,6 +302,6 @@ h1 {
 
 @media (min-width: 720px) {
   body { padding: 24px 28px 64px; }
-  .feed { grid-template-columns: 1fr 1fr; }
+  .feed, .tickets { grid-template-columns: 1fr 1fr; }
   h1 { font-size: 1.45rem; }
 }

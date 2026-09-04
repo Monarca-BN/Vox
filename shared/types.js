@@ -9,7 +9,23 @@
  * @property {string} resumen
  */
 
+/**
+ * Ticket fingido (spec 003). No es un issue de Linear.
+ *
+ * @typedef {Object} TicketFingido
+ * @property {string} id
+ * @property {string} titulo
+ * @property {'abierto' | 'hecho'} estado
+ * @property {'low' | 'medium' | 'high'} severity
+ * @property {string} feature
+ * @property {boolean} es_bug
+ * @property {string} resumen
+ * @property {string} textoOrigen
+ * @property {string} createdAt
+ */
+
 export const SEVERITIES = ["low", "medium", "high"];
+export const TICKET_ESTADOS = ["abierto", "hecho"];
 
 /** @param {unknown} x @returns {x is ComentarioAnalizado} */
 export function isComentarioAnalizado(x) {
