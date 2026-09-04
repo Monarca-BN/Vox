@@ -130,3 +130,11 @@ Session 2026-09-04. Decisions frozen before plan:
 - **C-006 CORS**: same as comments API; OPTIONS MUST allow POST (and GET).
 - **C-007 Id**: `T-` + increment is the default scheme.
 - **C-008 Titulo**: from `resumen` (trim); fallback first ~80 chars of `texto`.
+
+### Addendum (2026-09-04) — UI no longer creates tickets
+
+Juan: tickets are already created and **are what is arriving in the feed**. See [amendment-ui.md](./amendment-ui.md).
+
+- The PWA MUST NOT expose **Crear ticket** or a separate **Tickets fingidos** list.
+- Feed cards are the work items. Filters + feed stay.
+- Spec 003 API (`GET`/`POST` `/api/tickets`, `cerrar`) MAY remain for a later auto-threshold; the UI does not call it.

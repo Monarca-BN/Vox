@@ -332,8 +332,7 @@ body { padding: 0 16px 48px; }
 .stat.sev-medium .stat-val { color: var(--medium); }
 .stat.sev-low .stat-val { color: var(--low); }
 
-.feed,
-.tickets {
+.feed {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
@@ -390,9 +389,6 @@ body { padding: 0 16px 48px; }
   background: #241610;
 }
 
-.chip.abierto { color: var(--medium); }
-.chip.hecho { color: var(--accent); }
-
 .resumen {
   margin: 0 0 8px;
   font-size: 1rem;
@@ -405,47 +401,6 @@ body { padding: 0 16px 48px; }
   color: var(--muted);
   font-size: 0.9rem;
   line-height: 1.45;
-}
-
-.btn-ticket,
-.btn-cerrar {
-  margin-top: 12px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: var(--surface-2);
-  color: var(--text);
-  font: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.btn-ticket:hover,
-.btn-cerrar:hover { border-color: var(--accent); }
-
-.btn-ticket:disabled,
-.btn-cerrar:disabled {
-  opacity: 0.55;
-  cursor: wait;
-}
-
-.tickets-wrap {
-  max-width: var(--max);
-  margin: 28px auto 0;
-}
-
-.tickets-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.tickets-head h2 {
-  margin: 0;
-  font-size: 1.05rem;
 }
 
 .empty,
@@ -493,7 +448,7 @@ body { padding: 0 16px 48px; }
 @media (min-width: 720px) {
   body { padding: 0 28px 64px; }
   .topbar { margin: 0 -28px 24px; padding: 20px 28px 16px; }
-  .feed, .tickets { grid-template-columns: 1fr 1fr; }
+  .feed { grid-template-columns: 1fr 1fr; }
   .brand-text h1 { font-size: 1.45rem; }
 }
 
