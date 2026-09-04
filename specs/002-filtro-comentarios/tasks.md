@@ -80,3 +80,5 @@
 ## Implementation note
 
 Do not rewrite spec 001 files. Do not add npm dependencies.
+
+Analyze 2026-09-04 (`main` @ `25147a6` + live curls): T001–T014 remain DONE. See [analyze-report.md](./analyze-report.md).

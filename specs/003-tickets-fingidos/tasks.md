@@ -97,3 +97,5 @@ Juan asked for an end-to-end mock demo. Minimal `public/` only.
 ## Implementation note
 
 Do not add Linear, Supabase, or uuid packages. Prefer stdlib.
+
+Analyze 2026-09-04 (`main` @ `25147a6` + live curls): T001–T022 remain DONE. See [analyze-report.md](./analyze-report.md).
